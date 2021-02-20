@@ -11,15 +11,19 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import TextField from '@material-ui/core/TextField';
 
 const useStyles = makeStyles((theme) => ({
   app_bar:{
     backgroundColor:"#606ca9"
   },
+  username_input:{
+    backgroundColor: theme.palette.common.white,
+  },
   modal: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'center'
   },
   root: {
     flexGrow: 1,
@@ -40,6 +44,15 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     marginTop: theme.spacing(10),
+  },
+  form_card:{
+    marginTop:0
+  },
+  card_content:{
+    // padding: 0,
+    "&:last-child": {
+      paddingBottom: 16
+    }
   },
   CardActions: {
     'flex-wrap': 'wrap'
@@ -63,48 +76,107 @@ function DenseAppBar() {
     </div>
   );
 }
-function SignInModal(){
-
+function SignInModal(props) {
+  const classes = useStyles();
+  return (
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      className={classes.modal}
+      open={props.open}
+      onClose={props.handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+       <Fade in={props.open} style={{outline:0}}>
+        <Card className={classes.form_card}>
+          <CardContent className={classes.card_content}>
+            <div style={{ display: "flex", flexDirection: 'column' }}>
+              <Webcam audio={false} width={320} height={180} />
+              <Button style={{ marginTop: "10px" }} variant="contained" >Sign Up</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </Fade>
+    </Modal>
+    )
 }
-function SignUpModal(){
-
+function SignUpModal(props){
+  const classes = useStyles();
+  return (
+    <Modal
+      aria-labelledby="transition-modal-title"
+      aria-describedby="transition-modal-description"
+      className={classes.modal}
+      open={props.open}
+      onClose={props.handleClose}
+      closeAfterTransition
+      BackdropComponent={Backdrop}
+      BackdropProps={{
+        timeout: 500,
+      }}
+    >
+      <Fade in={props.open} style={{outline:0}}>
+        <Card className={classes.form_cards}>
+          <CardContent className={classes.card_content}>
+            <div style={{ display: "flex", flexDirection: 'column' }}>
+              <Webcam audio={false} width={320} height={180} />
+              <TextField  style={{ marginTop: "10px" }} size="small" id="standard-basic" label="Username" variant="outlined" />
+              <Button style={{ marginTop: "10px" }} variant="contained" >Sign Up</Button>
+            </div>
+          </CardContent>
+        </Card>
+      </Fade>
+    </Modal>)
 }
 
 function SignForm(){
   const classes = useStyles();
-  const [openSignInl, setOpenSignIn] = React.useState(false);
-
+  const [openSignIn, setOpenSignIn] = React.useState(false);
   const handleOpenSignIn = () => {
     setOpenSignIn(true);
   };
-
   const handleCloseSignIn = () => {
     setOpenSignIn(false);
   };
 
+  const [openSignUp, setOpenSignUp] = React.useState(false);
+  const handleOpenSignUp = () => {
+    setOpenSignUp(true);
+  };
+  const handleCloseSignUp = () => {
+    setOpenSignUp(false);
+  };
+
   return (
-    <div className={classes.container}>
-  <Card className={classes.card}>
-  <CardContent>
-  <Grid
-      className={classes.Oauth}
-      container
-      direction="row"
-      justify="center"
-      spacing={1}
-      alignItems="center"
-    >
-      <Grid item>
-        <Button
-          variant="contained">Sign in</Button>
-      </Grid>
-      <Grid item>
-        <Button variant="contained">Sign up</Button>
-      </Grid>
-    </Grid>
-  </CardContent>
-</Card>
-</div>)
+    <div>
+      <div className={classes.container}>
+        <Card className={classes.card}>
+          <CardContent className={classes.card_content}>
+            <Grid
+              className={classes.Oauth}
+              container
+              direction="row"
+              justify="center"
+              spacing={1}
+              alignItems="center"
+            >
+              <Grid item>
+                <Button onClick={handleOpenSignIn} variant="contained">Sign in</Button>
+              </Grid>
+              <Grid item>
+                <Button onClick={handleOpenSignUp} variant="contained" >Sign up</Button>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
+      </div>
+      <SignInModal open={openSignIn} handleClose={handleCloseSignIn}/>
+      <SignUpModal open={openSignUp} handleClose={handleCloseSignUp}/>
+    </div>)
 }
 
 export default function Index() {
