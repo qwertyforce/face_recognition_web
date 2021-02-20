@@ -12,6 +12,7 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import TextField from '@material-ui/core/TextField';
+import axios from 'axios'
 
 const useStyles = makeStyles((theme) => ({
   app_bar:{
@@ -78,10 +79,37 @@ function DenseAppBar() {
 }
 function SignInModal(props) {
   const classes = useStyles();
+  const webcamRef: React.RefObject<Webcam & HTMLVideoElement> = React.useRef(null);
+  const capture = React.useCallback(
+    () => {
+      if(webcamRef && webcamRef.current){
+        return webcamRef.current.getScreenshot();
+      }
+    },
+    [webcamRef]
+  );
+  const sign_in=()=>{
+    const image=capture()
+    console.log(image)
+    axios(`/sign_in`, {
+      method: "post",
+      data: {image}
+    }).then((resp) => {
+      alert('Successful');
+      // router.push("/");
+      console.log(resp)
+    }).catch((err) => {
+      alert(true);
+      if (err.response) {
+        alert(err.response.data.message)
+        console.log(err.response)
+      } else {
+        alert("Unknown error")
+      }
+    })
+  }
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       className={classes.modal}
       open={props.open}
       onClose={props.handleClose}
@@ -95,8 +123,8 @@ function SignInModal(props) {
         <Card className={classes.form_card}>
           <CardContent className={classes.card_content}>
             <div style={{ display: "flex", flexDirection: 'column' }}>
-              <Webcam audio={false} width={320} height={180} />
-              <Button style={{ marginTop: "10px" }} variant="contained" >Sign Up</Button>
+              <Webcam ref={webcamRef} screenshotFormat="image/jpeg" screenshotQuality={1} audio={false} width={320} height={180} />
+              <Button style={{ marginTop: "10px" }} variant="contained" onClick={sign_in} >Sign Up</Button>
             </div>
           </CardContent>
         </Card>
@@ -106,10 +134,37 @@ function SignInModal(props) {
 }
 function SignUpModal(props){
   const classes = useStyles();
+  const webcamRef: React.RefObject<Webcam & HTMLVideoElement> = React.useRef(null);
+  const capture = React.useCallback(
+    () => {
+      if(webcamRef && webcamRef.current){
+        return webcamRef.current.getScreenshot();
+      }
+    },
+    [webcamRef]
+  );
+  const sign_up=()=>{
+    const image=capture()
+    console.log(image)
+    axios(`/sign_up`, {
+      method: "post",
+      data: {image}
+    }).then((resp) => {
+      alert('Successful');
+      // router.push("/");
+      console.log(resp)
+    }).catch((err) => {
+      alert(true);
+      if (err.response) {
+        alert(err.response.data.message)
+        console.log(err.response)
+      } else {
+        alert("Unknown error")
+      }
+    })
+  }
   return (
     <Modal
-      aria-labelledby="transition-modal-title"
-      aria-describedby="transition-modal-description"
       className={classes.modal}
       open={props.open}
       onClose={props.handleClose}
@@ -120,10 +175,10 @@ function SignUpModal(props){
       }}
     >
       <Fade in={props.open} style={{outline:0}}>
-        <Card className={classes.form_cards}>
+        <Card className={classes.form_card}>
           <CardContent className={classes.card_content}>
             <div style={{ display: "flex", flexDirection: 'column' }}>
-              <Webcam audio={false} width={320} height={180} />
+            <Webcam ref={webcamRef} screenshotFormat="image/jpeg" screenshotQuality={1} audio={false} width={320} height={180} />
               <TextField  style={{ marginTop: "10px" }} size="small" id="standard-basic" label="Username" variant="outlined" />
               <Button style={{ marginTop: "10px" }} variant="contained" >Sign Up</Button>
             </div>
