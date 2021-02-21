@@ -88,12 +88,21 @@ function SignInModal(props) {
     },
     [webcamRef]
   );
-  const sign_in=()=>{
+  const sign_in=async ()=>{
     const image=capture()
-    console.log(image)
+    if(typeof image!=="string"){
+      return
+    }
+    const img_blob = await fetch(image).then(res => res.blob())
+    console.log(img_blob)
+    const formData = new FormData();
+    formData.append("image",img_blob)
     axios(`/sign_in`, {
       method: "post",
-      data: {image}
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
     }).then((resp) => {
       alert('Successful');
       // router.push("/");
@@ -124,7 +133,7 @@ function SignInModal(props) {
           <CardContent className={classes.card_content}>
             <div style={{ display: "flex", flexDirection: 'column' }}>
               <Webcam ref={webcamRef} screenshotFormat="image/jpeg" screenshotQuality={1} audio={false} width={320} height={180} />
-              <Button style={{ marginTop: "10px" }} variant="contained" onClick={sign_in} >Sign Up</Button>
+              <Button style={{ marginTop: "10px" }} variant="contained" onClick={sign_in} >Sign In</Button>
             </div>
           </CardContent>
         </Card>
@@ -134,6 +143,7 @@ function SignInModal(props) {
 }
 function SignUpModal(props){
   const classes = useStyles();
+  const [username, setUsername] = React.useState('');
   const webcamRef: React.RefObject<Webcam & HTMLVideoElement> = React.useRef(null);
   const capture = React.useCallback(
     () => {
@@ -143,12 +153,23 @@ function SignUpModal(props){
     },
     [webcamRef]
   );
-  const sign_up=()=>{
+  const sign_up=async ()=>{
     const image=capture()
-    console.log(image)
+    if(typeof image!=="string"){
+      return
+    }
+    const img_blob = await fetch(image).then(res => res.blob())
+    console.log(img_blob)
+    const formData = new FormData();
+    formData.append("image",img_blob)
+    console.log(username)
+    formData.append("username",username)
     axios(`/sign_up`, {
       method: "post",
-      data: {image}
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      },
     }).then((resp) => {
       alert('Successful');
       // router.push("/");
@@ -179,8 +200,8 @@ function SignUpModal(props){
           <CardContent className={classes.card_content}>
             <div style={{ display: "flex", flexDirection: 'column' }}>
             <Webcam ref={webcamRef} screenshotFormat="image/jpeg" screenshotQuality={1} audio={false} width={320} height={180} />
-              <TextField  style={{ marginTop: "10px" }} size="small" id="standard-basic" label="Username" variant="outlined" />
-              <Button style={{ marginTop: "10px" }} variant="contained" >Sign Up</Button>
+              <TextField  onChange={(e) => setUsername(e.target.value)} style={{ marginTop: "10px" }} size="small" id="standard-basic" label="Username" variant="outlined" />
+              <Button style={{ marginTop: "10px" }} onClick={sign_up}  variant="contained" >Sign Up</Button>
             </div>
           </CardContent>
         </Card>
